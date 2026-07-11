@@ -4,22 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
-/**
- * LoginScreen
- * -----------
+/*
  * Reached by tapping "Log In" on WelcomeScreen. Same navy + glow background
  * style as WelcomeScreen, styled to match the reference image: centered
  * two-line title, left-aligned subtitle, rounded dark email/password fields
  * with small icons, and a solid gradient LOGIN button.
- *
- * Per the brief, this intentionally skips: remember me, forgot password,
- * password visibility toggle, other sign-in options, and the "don't have
- * an account" link - just a Back button that returns to WelcomeScreen.
- *
- * This reuses WelcomeScreen.RoundedButton (rather than duplicating that
- * ~200-line class) - see the small ButtonStyle visibility change made in
- * WelcomeScreen.java for why that's possible.
- */
+*/
 public class LoginScreen extends JPanel {
 
     private final MainFrame mainFrame;
@@ -63,14 +53,14 @@ public class LoginScreen extends JPanel {
 
         // ---- email field ----
         RoundedField.PlaceholderTextField emailInput = new RoundedField.PlaceholderTextField("Email");
-        emailField = new RoundedField(emailInput, RoundedField.IconType.EMAIL);
+        emailField = new RoundedField(emailInput);
         emailField.setAlignmentX(Component.LEFT_ALIGNMENT);
         emailField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
         emailField.setPreferredSize(new Dimension(10, 52));
 
         // ---- password field (no visibility toggle, per the brief) ----
         RoundedField.PlaceholderPasswordField passwordInput = new RoundedField.PlaceholderPasswordField("Password");
-        passwordField = new RoundedField(passwordInput, RoundedField.IconType.PASSWORD);
+        passwordField = new RoundedField(passwordInput);
         passwordField.setAlignmentX(Component.LEFT_ALIGNMENT);
         passwordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
         passwordField.setPreferredSize(new Dimension(10, 52));
