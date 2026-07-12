@@ -1,2 +1,33 @@
-/bin/
-/target/
+# Maven build output
+target/
+
+# Compiled Java files
+*.class
+
+# Eclipse files
+.project
+.classpath
+.settings/
+.metadata/
+bin/
+
+# VS Code files
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Java crash files
+hs_err_pid*
+replay_pid*
