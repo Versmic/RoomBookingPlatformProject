@@ -2,59 +2,31 @@ package roombooking.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.RoundRectangle2D;
 
 /**
  * RoundedField
  * ------------
- * A rounded, dark "card" input field with a small hand-drawn icon on the
- * left and a borderless text field (with placeholder support) on the
- * right - matches the input style from the login screen reference image.
- * Also supports the same scale+fade pop-in entrance animation used by
- * WelcomeScreen.RoundedButton, so form fields can cascade in alongside
- * the buttons.
+ * A rounded, dark input field containing a borderless text field
+ * with placeholder support.
+ *
+ * It also supports the same scale-and-fade entrance animation used
+ * by WelcomeScreen.RoundedButton.
  */
 public class RoundedField extends JPanel {
-
-    public enum IconType { EMAIL, PASSWORD }
 
     private float entranceProgress = 1f;
     private Timer entranceTimer;
 
-    public RoundedField(JTextField field, IconType iconType) {
+    /**
+     * Creates a rounded field containing the supplied text field.
+     */
+    public RoundedField(JTextField field) {
         setOpaque(false);
-        setLayout(new BorderLayout(10, 0));
-        setBorder(BorderFactory.createEmptyBorder(0, 16, 0, 16)); // inner padding around icon + text
+        setLayout(new BorderLayout());
 
-        JComponent icon = new JComponent() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setStroke(new BasicStroke(1.6f));
-                g2.setColor(Colours.TEXT_MUTED);
-
-                int w = getWidth();
-                int h = getHeight();
-
-                if (iconType == IconType.EMAIL) {
-                    // simple envelope: outline rectangle + a "V" fold line
-                    g2.draw(new RoundRectangle2D.Double(1, 3, w - 3, h - 7, 3, 3));
-                    g2.draw(new Line2D.Double(1, 4, w / 2.0, h / 2.0 + 1));
-                    g2.draw(new Line2D.Double(w - 2, 4, w / 2.0, h / 2.0 + 1));
-                } else {
-                    // simple padlock: arc shackle + filled rounded body
-                    g2.draw(new Arc2D.Double(w * 0.20, 0, w * 0.6, h * 0.65, 0, 180, Arc2D.OPEN));
-                    g2.fill(new RoundRectangle2D.Double(w * 0.12, h * 0.42, w * 0.76, h * 0.5, 4, 4));
-                }
-
-                g2.dispose();
-            }
-        };
-        icon.setOpaque(false);
-        icon.setPreferredSize(new Dimension(22, 22));
+        // Padding around the text inside the rounded field
+        setBorder(BorderFactory.createEmptyBorder(0, 16, 0, 16));
 
         field.setOpaque(false);
         field.setBorder(BorderFactory.createEmptyBorder());
@@ -62,60 +34,120 @@ public class RoundedField extends JPanel {
         field.setCaretColor(Colours.TEXT_LIGHT);
         field.setFont(new Font("SansSerif", Font.PLAIN, 15));
 
-        add(icon, BorderLayout.WEST);
         add(field, BorderLayout.CENTER);
     }
 
-    /** Plays the same pop-in entrance animation used by RoundedButton, ~250ms ease-out. */
+    /**
+     * Plays a scale-and-fade entrance animation.
+     */
     public void playEntranceAnimation() {
-        if (entranceTimer != null && entranceTimer.isRunning()) entranceTimer.stop();
+        if (entranceTimer != null && entranceTimer.isRunning()) {
+            entranceTimer.stop();
+        }
 
         long startTime = System.currentTimeMillis();
         int durationMs = 250;
+
         entranceProgress = 0f;
 
         entranceTimer = new Timer(12, null);
+
         entranceTimer.addActionListener(e -> {
             long elapsed = System.currentTimeMillis() - startTime;
-            float t = Math.min(1f, elapsed / (float) durationMs);
+
+            float t = Math.min(
+                    1f,
+                    elapsed / (float) durationMs
+            );
+
             float f = t - 1f;
-            entranceProgress = f * f * f + 1f; // ease-out cubic
+
+            // Ease-out cubic animation
+            entranceProgress = f * f * f + 1f;
+
             repaint();
-            if (t >= 1f) entranceTimer.stop();
+
+            if (t >= 1f) {
+                entranceProgress = 1f;
+                entranceTimer.stop();
+            }
         });
+
         entranceTimer.start();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int w = getWidth();
-        int h = getHeight();
+        g2.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
 
+        int width = getWidth();
+        int height = getHeight();
+
+        /*
+         * Scale and fade the entire field during its entrance animation.
+         */
         if (entranceProgress < 1f) {
             float scaleX = 0.85f + 0.15f * entranceProgress;
-            int centerX = w / 2;
+            int centerX = width / 2;
+
             g2.translate(centerX, 0);
             g2.scale(scaleX, 1.0);
             g2.translate(-centerX, 0);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0f, Math.min(1f, entranceProgress))));
+
+            float alpha = Math.max(
+                    0f,
+                    Math.min(1f, entranceProgress)
+            );
+
+            g2.setComposite(
+                    AlphaComposite.getInstance(
+                            AlphaComposite.SRC_OVER,
+                            alpha
+                    )
+            );
         }
 
-        g2.setColor(new Color(0x1B, 0x22, 0x33)); // dark card fill, slightly lighter than the navy background
-        g2.fill(new RoundRectangle2D.Double(0, 0, w, h, 18, 18));
+        // Dark field background
+        g2.setColor(new Color(0x1B, 0x22, 0x33));
 
-        g2.setColor(new Color(255, 255, 255, 22)); // faint border for definition against the background
+        g2.fill(new RoundRectangle2D.Double(
+                0,
+                0,
+                width,
+                height,
+                18,
+                18
+        ));
+
+        // Faint border
+        g2.setColor(new Color(255, 255, 255, 22));
         g2.setStroke(new BasicStroke(1f));
-        g2.draw(new RoundRectangle2D.Double(0.5, 0.5, w - 1, h - 1, 18, 18));
 
-        super.paintComponent(g2); // paint the icon + text field within the same transform/fade
+        g2.draw(new RoundRectangle2D.Double(
+                0.5,
+                0.5,
+                width - 1,
+                height - 1,
+                18,
+                18
+        ));
+
+        // Paint the text field using the same animation transformation
+        super.paintComponent(g2);
+
         g2.dispose();
     }
 
-    /** JTextField that draws placeholder text (in TEXT_MUTED) whenever it's empty. */
+    /**
+     * JTextField that draws placeholder text whenever the field is empty.
+     */
     public static class PlaceholderTextField extends JTextField {
+
         private final String placeholder;
 
         public PlaceholderTextField(String placeholder) {
@@ -125,21 +157,38 @@ public class RoundedField extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
             if (getText().isEmpty()) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
+
                 g2.setColor(Colours.TEXT_MUTED);
                 g2.setFont(getFont());
-                FontMetrics fm = g2.getFontMetrics();
-                int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+
+                FontMetrics fontMetrics = g2.getFontMetrics();
+
+                int y = (
+                        getHeight()
+                        + fontMetrics.getAscent()
+                        - fontMetrics.getDescent()
+                ) / 2;
+
                 g2.drawString(placeholder, 2, y);
+
                 g2.dispose();
             }
         }
     }
 
-    /** JPasswordField that draws placeholder text (in TEXT_MUTED) whenever it's empty. */
+    /**
+     * JPasswordField that draws placeholder text whenever the field is empty.
+     */
     public static class PlaceholderPasswordField extends JPasswordField {
+
         private final String placeholder;
 
         public PlaceholderPasswordField(String placeholder) {
@@ -149,14 +198,28 @@ public class RoundedField extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
             if (getPassword().length == 0) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON
+                );
+
                 g2.setColor(Colours.TEXT_MUTED);
                 g2.setFont(getFont());
-                FontMetrics fm = g2.getFontMetrics();
-                int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+
+                FontMetrics fontMetrics = g2.getFontMetrics();
+
+                int y = (
+                        getHeight()
+                        + fontMetrics.getAscent()
+                        - fontMetrics.getDescent()
+                ) / 2;
+
                 g2.drawString(placeholder, 2, y);
+
                 g2.dispose();
             }
         }
