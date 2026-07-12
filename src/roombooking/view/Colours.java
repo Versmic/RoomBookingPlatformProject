@@ -20,5 +20,4 @@ public final class Colours {
     static final Color TURQUOISE = Color.decode("#09AA91"); // vibrant turquoise
     static final Color GREEN     = Color.decode("#44C876"); // fresh green 
     static final Color LIME      = Color.decode("#CCE574"); // soft lime
-
 }

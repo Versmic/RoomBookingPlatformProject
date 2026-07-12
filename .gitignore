@@ -30,4 +30,8 @@ desktop.ini
 
 # Java crash files
 hs_err_pid*
+<<<<<<< HEAD
 replay_pid*
+=======
+replay_pid*
+>>>>>>> branch 'main' of https://github.com/Versmic/RoomBookingPlatformProject
