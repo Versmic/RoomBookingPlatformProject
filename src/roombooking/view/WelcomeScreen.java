@@ -14,7 +14,7 @@ import java.util.List;
  * clicking Sign Up shrinks those three out, then pops in the account
  * type choices: Student / Staff / Faculty / Partner / a Back button
 */
-public class WelcomeScreen extends JPanel {
+public class WelcomeScreen extends JPanel implements AnimatedScreen {
 
     // Reference to the parent frame so buttons can trigger screen navigation.
     private final MainFrame mainFrame;
@@ -22,15 +22,12 @@ public class WelcomeScreen extends JPanel {
     private final JLabel subtitleLabel;
     private final JPanel buttonArea;
 
-    // Tracks how "faded in" the background currently is (0 = invisible, 1 = fully visible).
-    private float contentAlpha = 0f;
-
     public WelcomeScreen(MainFrame mainFrame) {
 
         this.mainFrame = mainFrame; // hold a reference to the main frame
 
         this.setLayout(new GridBagLayout()); // welcome screen panel uses grid bag layout
-        this.setOpaque(true);                // welcome screen panel has solid background
+        this.setOpaque(false);               // BackGroundInit paints the shared background
         
 
         // create inner panel holds the text + buttons and stacked vertically
@@ -42,14 +39,14 @@ public class WelcomeScreen extends JPanel {
         // title text
         JLabel title = new JLabel("Welcome to RoomBooking");
         title.setFont(new Font("SansSerif", Font.BOLD, 26)); // text set to bold and size 26
-        title.setForeground(Colours.TEXT_LIGHT);                      // set color to TEXT_LIGHT, init above
+        title.setForeground(Colours.TEXT_LIGHT);                      // set color to TEXT_LIGHT
         title.setAlignmentX(Component.LEFT_ALIGNMENT);        // align title text to left
 
 
         // subtitle text 
         subtitleLabel = new JLabel("Start with sign up or sign in");
         subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, 14)); // text set to plain and size 14
-        subtitleLabel.setForeground(Colours.TEXT_MUTED); // set color to TEXT_MUTED, init above
+        subtitleLabel.setForeground(Colours.TEXT_MUTED); // set color to TEXT_MUTED
         subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // align subtitle text to left
 
 
@@ -96,7 +93,7 @@ public class WelcomeScreen extends JPanel {
         }
 
         // add action listener to login button
-        loginBtn.addActionListener(e -> mainFrame.navigateTo(new LoginScreen(mainFrame)));
+        loginBtn.addActionListener(e -> mainFrame.showScreen(new LoginScreen(mainFrame)));
 
         // when sign up button is pressed, remove all current
         // buttons and instead display account type buttons
@@ -232,69 +229,11 @@ public class WelcomeScreen extends JPanel {
      *      on first launch) pop in staggered, same as after any later transition.
      * Call this once after the screen is added to a visible frame.
      */
-    public void playEntranceAnimation() {
-        // ---- 1) fade the background glow in ----
-        contentAlpha = 0f;                 // start fully transparent
-        Timer bgTimer = new Timer(15, null); // fires every 15ms (~66 times per second)
-        bgTimer.addActionListener(e -> {
-            contentAlpha += 0.07f;         // step the alpha value up a little each tick (~200ms total)
-            if (contentAlpha >= 1f) {      // once fully visible...
-                contentAlpha = 1f;         // clamp so it doesn't overshoot 1.0
-                bgTimer.stop();            // ...stop the timer so it's not running forever
-            }
-            repaint(); // ask Swing to redraw this panel (calls paintComponent below)
-        });
-        bgTimer.start(); // kick off the background fade
-
-        // ---- 2) pop the current buttons in, staggered ----
-        popInStaggered(currentButtons(), 70);
-    }
-
-    /**
-     * Custom painting for the background: solid navy fill + three soft,
-     * semi-transparent glow circles in purple/blue/cyan layered like the
-     */
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // let Swing do its normal background clearing first
-
-        // Graphics2D gives us access to shapes, gradients, and anti-aliasing
-        // that the basic Graphics class doesn't expose. g.create() makes a
-        // throwaway copy so our settings don't leak into other painting.
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // smooth curved edges
-
-        // apply the fade-in: everything drawn with g2 from this point on is
-        // multiplied by contentAlpha (0 = invisible, 1 = fully opaque)
-        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, contentAlpha));
-
-        int w = getWidth();  // current panel width in pixels
-        int h = getHeight(); // current panel height in pixels
-
-        // ---- base background: solid dark navy ----
-        g2.setColor(Colours.BG_NAVY);
-        g2.fillRect(0, 0, w, h);
-
-        // ---- glow shape 1: purple, top-left-ish, low opacity ----
-        // new Color(r, g, b, alpha) - alpha (0-255) controls transparency, 255 = fully opaque
-        g2.setColor(new Color(Colours.PURPLE.getRed(), Colours.PURPLE.getGreen(), Colours.PURPLE.getBlue(), 70));
-        g2.fill(new Ellipse2D.Double(-w * 0.25, -h * 0.10, w * 0.9, w * 0.9));
-
-        // ---- glow shape 2: blue, upper-right, slightly more opaque ----
-        g2.setColor(new Color(Colours.BLUE.getRed(), Colours.BLUE.getGreen(), Colours.BLUE.getBlue(), 90));
-        g2.fill(new Ellipse2D.Double(w * 0.45, -h * 0.05, w * 0.85, w * 0.85));
-
-        // ---- glow shape 3: cyan, lower area, drawn with a gradient for depth ----
-        // GradientPaint blends smoothly from one color at one point to another
-        // color at another point, instead of a flat fill.
-        GradientPaint gradient = new GradientPaint(
-                0, (float) (h * 0.75), Colours.CYAN,   // start point + start color
-                w, h, Colours.BLUE                      // end point + end color
-        );
-        g2.setPaint(gradient);
-        g2.fill(new Ellipse2D.Double(w * 0.10, h * 0.80, w * 0.95, w * 0.95));
-
-        g2.dispose(); // release the Graphics2D copy we created above
+    public void playEntranceAnimation() {
+        // BackGroundInit handles the whole-screen fade/scale transition.
+        // WelcomeScreen keeps its staggered button entrance animation.
+        popInStaggered(currentButtons(), 70);
     }
 
     /**
