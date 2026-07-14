@@ -1,7 +1,7 @@
 package roombooking.command;
 
-import roombooking.model.Booking;
-import roombooking.model.enums.BookingStatus;
+import users.Booking;
+import users.BookingStatus;
 import roombooking.service.BookingService;
 import roombooking.observer.NotificationService;
 
@@ -53,10 +53,7 @@ public class CheckinCommand implements Command {
             bookingService.updateBooking(booking);
             executed = true;
             
-            double remainingBalance = bookingService.applyDepositToFinalCost(booking);
-            if (remainingBalance > 0) {
-                bookingService.processPayment(booking.getUserId(), remainingBalance);
-            }
+            bookingService.applyDepositToFinalCost(booking);
             
             NotificationService.getInstance().sendNotification(
                 "Check-in successful: " + bookingId
