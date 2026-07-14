@@ -1,6 +1,6 @@
 package roombooking.command;
 
-import roombooking.model.enums.RoomStatus;
+import users.RoomStatus;
 import roombooking.service.RoomService;
 import roombooking.observer.NotificationService;
 
