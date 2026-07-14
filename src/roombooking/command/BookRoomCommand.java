@@ -1,8 +1,8 @@
 package roombooking.command;
 
-import roombooking.model.Booking;
-import roombooking.model.User;
-import roombooking.model.enums.BookingStatus;
+import users.Booking;
+import users.RegisteredUser;
+import users.BookingStatus;
 import roombooking.service.BookingService;
 import roombooking.observer.NotificationService;
 
@@ -33,7 +33,7 @@ public class BookRoomCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            User user = bookingService.getUser(userId);
+            RegisteredUser user = bookingService.getUser(userId);
             if (user == null) {
                 return false;
             }
@@ -54,12 +54,12 @@ public class BookRoomCommand implements Command {
             }
             
             createdBooking = bookingService.bookRoom(userId, roomId, startTime, endTime, depositAmount);
-            createdBooking.setTotalCost(totalCost);
+            createdBooking.setFinalCost(totalCost);
             bookingService.updateBooking(createdBooking);
             executed = true;
             
             NotificationService.getInstance().sendNotification(
-                "Booking confirmed: " + createdBooking.getBookingId()
+                "Booking confirmed: " + createdBooking.getBookingID()
             );
             
             return true;
@@ -75,11 +75,11 @@ public class BookRoomCommand implements Command {
             return false;
         }
         
-        boolean success = bookingService.cancelBooking(createdBooking.getBookingId());
+        boolean success = bookingService.cancelBooking(createdBooking.getBookingID());
         if (success) {
             bookingService.processRefund(userId, depositAmount);
             NotificationService.getInstance().sendNotification(
-                "Booking undone: " + createdBooking.getBookingId()
+                "Booking undone: " + createdBooking.getBookingID()
             );
         }
         return success;
