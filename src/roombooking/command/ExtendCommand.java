@@ -1,7 +1,7 @@
 package roombooking.command;
 
-import roombooking.model.Booking;
-import roombooking.model.User;
+import users.Booking;
+import users.RegisteredUser;
 import roombooking.service.BookingService;
 import roombooking.observer.NotificationService;
 
@@ -38,22 +38,22 @@ public class ExtendCommand implements Command {
             return false;
         }
         
-        if (!bookingService.isRoomAvailable(booking.getRoomId(), booking.getStartTime(), newEndTime)) {
+        if (!bookingService.isRoomAvailable(booking.getRoomID(), booking.getStartTime(), newEndTime)) {
             return false;
         }
         
-        User user = bookingService.getUser(booking.getUserId());
+        RegisteredUser user = bookingService.getUser(booking.getUserID());
         long extraHours = Duration.between(booking.getEndTime(), newEndTime).toHours();
         if (extraHours <= 0) extraHours = 1;
         extensionCost = user.getRate() * extraHours;
         
-        if (!bookingService.processPayment(booking.getUserId(), extensionCost)) {
+        if (!bookingService.processPayment(booking.getUserID(), extensionCost)) {
             return false;
         }
         
         oldEndTime = booking.getEndTime();
         booking.setEndTime(newEndTime);
-        booking.setTotalCost(booking.getTotalCost() + extensionCost);
+        booking.setFinalCost(booking.getFinalCost() + extensionCost);
         bookingService.updateBooking(booking);
         executed = true;
         
@@ -71,9 +71,9 @@ public class ExtendCommand implements Command {
         }
         
         booking.setEndTime(oldEndTime);
-        booking.setTotalCost(booking.getTotalCost() - extensionCost);
+        booking.setFinalCost(booking.getFinalCost() - extensionCost);
         bookingService.updateBooking(booking);
-        bookingService.processRefund(booking.getUserId(), extensionCost);
+        bookingService.processRefund(booking.getUserID(), extensionCost);
         
         return true;
     }
