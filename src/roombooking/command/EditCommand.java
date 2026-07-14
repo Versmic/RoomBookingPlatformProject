@@ -1,7 +1,7 @@
 package roombooking.command;
 
-import roombooking.model.Booking;
-import roombooking.model.User;
+import users.Booking;
+import users.RegisteredUser;
 import roombooking.service.BookingService;
 import roombooking.observer.NotificationService;
 
@@ -41,29 +41,29 @@ public class EditCommand implements Command {
         
         oldStartTime = booking.getStartTime();
         oldEndTime = booking.getEndTime();
-        oldTotalCost = booking.getTotalCost();
+        oldTotalCost = booking.getFinalCost();
         
-        if (!bookingService.isRoomAvailable(booking.getRoomId(), newStartTime, newEndTime)) {
+        if (!bookingService.isRoomAvailable(booking.getRoomID(), newStartTime, newEndTime)) {
             return false;
         }
         
-        User user = bookingService.getUser(booking.getUserId());
+        RegisteredUser user = bookingService.getUser(booking.getUserID());
         long hours = Duration.between(newStartTime, newEndTime).toHours();
         if (hours <= 0) hours = 1;
         double newTotalCost = user.getRate() * hours;
         priceDifference = newTotalCost - oldTotalCost;
         
         if (priceDifference > 0) {
-            if (!bookingService.processPayment(booking.getUserId(), priceDifference)) {
+            if (!bookingService.processPayment(booking.getUserID(), priceDifference)) {
                 return false;
             }
         } else if (priceDifference < 0) {
-            bookingService.processRefund(booking.getUserId(), Math.abs(priceDifference));
+            bookingService.processRefund(booking.getUserID(), Math.abs(priceDifference));
         }
         
         booking.setStartTime(newStartTime);
         booking.setEndTime(newEndTime);
-        booking.setTotalCost(newTotalCost);
+        booking.setFinalCost(newTotalCost);
         bookingService.updateBooking(booking);
         executed = true;
         
@@ -82,13 +82,13 @@ public class EditCommand implements Command {
         
         booking.setStartTime(oldStartTime);
         booking.setEndTime(oldEndTime);
-        booking.setTotalCost(oldTotalCost);
+        booking.setFinalCost(oldTotalCost);
         bookingService.updateBooking(booking);
         
         if (priceDifference > 0) {
-            bookingService.processRefund(booking.getUserId(), priceDifference);
+            bookingService.processRefund(booking.getUserID(), priceDifference);
         } else if (priceDifference < 0) {
-            bookingService.processPayment(booking.getUserId(), Math.abs(priceDifference));
+            bookingService.processPayment(booking.getUserID(), Math.abs(priceDifference));
         }
         
         return true;
