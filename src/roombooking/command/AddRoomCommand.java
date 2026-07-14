@@ -1,7 +1,7 @@
 package roombooking.command;
 
-import roombooking.model.Room;
-import roombooking.model.enums.RoomStatus;
+import users.Room;
+import users.RoomStatus;
 import roombooking.service.RoomService;
 import roombooking.observer.NotificationService;
 
@@ -51,7 +51,7 @@ public class AddRoomCommand implements Command {
         if (createdRoom == null) {
             return false;
         }
-        return roomService.removeRoom(createdRoom.getRoomId());
+        return roomService.removeRoom(createdRoom.getRoomID());
     }
     
     @Override
