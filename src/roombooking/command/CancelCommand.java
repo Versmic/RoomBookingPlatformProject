@@ -1,7 +1,7 @@
 package roombooking.command;
 
-import roombooking.model.Booking;
-import roombooking.model.enums.BookingStatus;
+import users.Booking;
+import users.BookingStatus;
 import roombooking.service.BookingService;
 import roombooking.observer.NotificationService;
 
@@ -35,8 +35,8 @@ public class CancelCommand implements Command {
         
         executed = bookingService.cancelBooking(bookingId);
         if (executed) {
-            double refundAmount = cancelledBooking.getDepositPaid();
-            bookingService.processRefund(cancelledBooking.getUserId(), refundAmount);
+            double refundAmount = cancelledBooking.getDepositAmount();
+            bookingService.processRefund(cancelledBooking.getUserID(), refundAmount);
             
             NotificationService.getInstance().sendNotification(
                 "Booking cancelled: " + bookingId
