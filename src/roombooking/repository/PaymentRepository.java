@@ -1,8 +1,12 @@
-package users;
+package roombooking.repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import roombooking.model.Payment;
+import roombooking.model.PaymentMethod;
+import users.PaymentType;
 
 
 public class PaymentRepository {

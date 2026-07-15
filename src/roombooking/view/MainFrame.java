@@ -10,7 +10,7 @@ import java.awt.*;
  */
 public class MainFrame extends JFrame {
 
-    private final BackgroundInit backgroundInit;
+    private final BackgroundInitFrame backgroundInitFrame;
 
     public MainFrame() {
         setTitle("RoomBookingPlatform");
@@ -21,17 +21,24 @@ public class MainFrame extends JFrame {
         setResizable(false);
         
         // use backgroundinit as the main panel
-        backgroundInit = new BackgroundInit(); 
-        setContentPane(backgroundInit);
+        backgroundInitFrame = new BackgroundInitFrame(); 
+        setContentPane(backgroundInitFrame);
         // display welcome screen infront of backgroundinit
-        backgroundInit.showInitialScreen(new WelcomeScreen(this)); // 
+        backgroundInitFrame.showInitialScreen(new WelcomeScreen(this)); // 
         setVisible(true);
     }
 
-    /** Uses a fade-and-scale content transition; the background stays fixed. */
+    // has transitions between the initial screens
     public void showScreen(JPanel screen) {
-        backgroundInit.transitionTo(screen);
+        backgroundInitFrame.transitionTo(screen);
     }
     
+    public void startMainAppShellFrame() {
+    	//create a appshellframe similar to background init
+    	//this will be the main Frame and everything inside it will be panels
+    	
+    	
+    	
+    }
     
 }

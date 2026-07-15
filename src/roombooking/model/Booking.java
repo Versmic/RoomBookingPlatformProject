@@ -1,6 +1,8 @@
-package users;
+package roombooking.model;
 
 import java.time.LocalDateTime;
+
+import users.BookingStatus;
 
 public class Booking {
 

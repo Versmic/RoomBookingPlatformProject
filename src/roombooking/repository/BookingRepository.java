@@ -1,8 +1,11 @@
-package users;
+package roombooking.repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import roombooking.model.Booking;
+import users.BookingStatus;
 
 public class BookingRepository {
 

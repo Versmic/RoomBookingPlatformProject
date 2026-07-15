@@ -1,4 +1,6 @@
-package users;
+package roombooking.factory;
+
+import roombooking.model.RegisteredUser;
 
 public class AccountFactory {
 

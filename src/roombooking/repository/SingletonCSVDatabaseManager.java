@@ -1,11 +1,10 @@
-package users;
+package roombooking.repository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SingletonCSVDatabaseManager {
 
@@ -21,14 +20,15 @@ public class SingletonCSVDatabaseManager {
         return instance;
     }
 
-    public List<String[]> readCSV(String fileName) {
-        List<String[]> rows = new ArrayList<>();
+    public ArrayList<String[]> readCSV(String fileName) {
+        ArrayList<String[]> rows = new ArrayList<>();
         Path path = Paths.get(fileName);
         if (!Files.exists(path)) {
+        	System.out.println("a");
             return rows;
         }
         try {
-            List<String> lines = Files.readAllLines(path);
+            ArrayList<String> lines = (ArrayList<String>) Files.readAllLines(path);
             for (String line : lines) {
                 if (line.isEmpty()) {
                     continue;
@@ -41,10 +41,10 @@ public class SingletonCSVDatabaseManager {
         return rows;
     }
 
-    public void writeCSV(String fileName, List<String[]> rows) {
+    public void writeCSV(String fileName, ArrayList<String[]> rows) {
         Path path = Paths.get(fileName);
         try {
-            List<String> lines = new ArrayList<>();
+            ArrayList<String> lines = new ArrayList<>();
             for (String[] row : rows) {
                 lines.add(String.join(",", row));
             }
@@ -55,7 +55,7 @@ public class SingletonCSVDatabaseManager {
     }
 
     public void updateRow(String fileName, int idColumn, String idValue, String[] newRow) {
-        List<String[]> rows = readCSV(fileName);
+        ArrayList<String[]> rows = readCSV(fileName);
         boolean found = false;
         for (int i = 0; i < rows.size(); i++) {
             String[] row = rows.get(i);
@@ -71,8 +71,8 @@ public class SingletonCSVDatabaseManager {
     }
 
     public void deleteRow(String fileName, int idColumn, String idValue) {
-        List<String[]> rows = readCSV(fileName);
-        List<String[]> remaining = new ArrayList<>();
+        ArrayList<String[]> rows = readCSV(fileName);
+        ArrayList<String[]> remaining = new ArrayList<>();
         for (String[] row : rows) {
             if (idColumn >= row.length || !row[idColumn].equals(idValue)) {
                 remaining.add(row);

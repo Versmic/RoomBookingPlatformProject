@@ -1,4 +1,4 @@
-package users;
+package roombooking.model;
 
 public class PaymentMethod {
 

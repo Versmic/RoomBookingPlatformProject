@@ -1,4 +1,6 @@
-package users;
+package roombooking.model;
+
+import users.RoomStatus;
 
 public class Room {
 

@@ -12,7 +12,7 @@ import java.awt.geom.Ellipse2D;
  * so the background never slides, flashes, or gets repainted as a different
  * screen.
  */
-public class BackgroundInit extends JPanel {
+public class BackgroundInitFrame extends JPanel {
 
     private static final int TRANSITION_DURATION_MS = 260;
     private static final int TIMER_DELAY_MS = 12;
@@ -20,7 +20,7 @@ public class BackgroundInit extends JPanel {
     private AlphaScaleWrapper currentWrapper;
     private boolean transitioning;
 
-    public BackgroundInit() {
+    public BackgroundInitFrame() {
         setOpaque(true);
         setLayout(new BorderLayout());
     }

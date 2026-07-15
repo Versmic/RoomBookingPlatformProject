@@ -1,7 +1,10 @@
-package users;
+package roombooking.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import roombooking.model.Room;
+import users.RoomStatus;
 
 public class RoomRepository {
 
