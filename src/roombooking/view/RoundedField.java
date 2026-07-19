@@ -5,13 +5,8 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 /**
- * RoundedField
- * ------------
  * A rounded, dark input field containing a borderless text field
  * with placeholder support.
- *
- * It also supports the same scale-and-fade entrance animation used
- * by WelcomeScreen.RoundedButton.
  */
 public class RoundedField extends JPanel {
 

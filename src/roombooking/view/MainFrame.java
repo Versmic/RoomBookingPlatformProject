@@ -1,6 +1,7 @@
 package roombooking.view;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 /**
@@ -24,21 +25,20 @@ public class MainFrame extends JFrame {
         backgroundInitFrame = new BackgroundInitFrame(); 
         setContentPane(backgroundInitFrame);
         // display welcome screen infront of backgroundinit
-        backgroundInitFrame.showInitialScreen(new WelcomeScreen(this)); // 
+        backgroundInitFrame.showInitialScreen(new WelcomePanel(this));
         setVisible(true);
     }
 
-    // has transitions between the initial screens
-    public void showScreen(JPanel screen) {
-        backgroundInitFrame.transitionTo(screen);
+    // transitions between the initial screens
+    public void showPanel(JPanel panel) {
+    	backgroundInitFrame.transitionTo(panel);
     }
     
-    public void startMainAppShellFrame() {
-    	//create a appshellframe similar to background init
-    	//this will be the main Frame and everything inside it will be panels
-    	
-    	
-    	
+    // create the our main app shell frame
+    public void startMainAppShellFrame(String username) {
+    	dispose();
+        new AppShellFrame(username);
+	
     }
     
 }

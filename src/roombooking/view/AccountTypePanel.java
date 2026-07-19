@@ -3,6 +3,7 @@ package roombooking.view;
 import javax.swing.*;
 
 import roombooking.enums.AccountType;
+import roombooking.view.RoundedButton.ButtonStyle;
 
 import java.awt.*;
 
@@ -11,7 +12,7 @@ import java.awt.*;
  * Allows the user to choose which type of account they want to create.
  * This screen is displayed over the permanent BackgroundInit panel.
  */
-public class AccountTypeScreen extends JPanel implements AnimatedScreen {
+public class AccountTypePanel extends JPanel {
 
     // main frame reference used for screen navigation.
     private final MainFrame mainFrame;
@@ -23,7 +24,7 @@ public class AccountTypeScreen extends JPanel implements AnimatedScreen {
     private final RoundedButton partnerBtn;
     private final RoundedButton backBtn;
 
-    public AccountTypeScreen(MainFrame mainFrame) {
+    public AccountTypePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
         // centers the content panel inside the screen
@@ -79,23 +80,23 @@ public class AccountTypeScreen extends JPanel implements AnimatedScreen {
 
         // Temporary actions until the signup screens are created.
         studentBtn.addActionListener(e -> {
-            mainFrame.showScreen(new SignUpScreen(mainFrame, AccountType.STUDENT));
+            mainFrame.showPanel(new SignUpPanel(mainFrame, AccountType.STUDENT));
         });
 
         staffBtn.addActionListener(e -> {
-            mainFrame.showScreen(new SignUpScreen(mainFrame, AccountType.STAFF));
+            mainFrame.showPanel(new SignUpPanel(mainFrame, AccountType.STAFF));
         });
         
         facultyBtn.addActionListener(e -> {
-            mainFrame.showScreen(new SignUpScreen(mainFrame, AccountType.FACULTY));
+            mainFrame.showPanel(new SignUpPanel(mainFrame, AccountType.FACULTY));
         });
      
         partnerBtn.addActionListener(e -> {
-            mainFrame.showScreen(new SignUpScreen(mainFrame, AccountType.PARTNER));
+            mainFrame.showPanel(new SignUpPanel(mainFrame, AccountType.PARTNER));
         });
 
         
-        backBtn.addActionListener(e -> mainFrame.showScreen(new WelcomeScreen(mainFrame)));
+        backBtn.addActionListener(e -> mainFrame.showPanel(new WelcomePanel(mainFrame)));
 
         // add screen content vertically
         inner.add(title);
@@ -128,39 +129,4 @@ public class AccountTypeScreen extends JPanel implements AnimatedScreen {
         add(inner, constraints);
     }
 
-    /**
-     * Animates each button into view one after another.
-     * BackgroundInit handles the whole-screen fade and scale transition.
-     */
-    @Override
-    public void playEntranceAnimation() {
-        JComponent[] sequence = {
-                studentBtn,
-                staffBtn,
-                facultyBtn,
-                partnerBtn,
-                backBtn
-        };
-
-        int staggerMs = 65;
-
-        for (int index = 0; index < sequence.length; index++) {
-            JComponent component = sequence[index];
-
-            Timer delay = new Timer(
-                    staggerMs * index,
-                    event -> {
-                        if (
-                                component
-                                instanceof RoundedButton button
-                        ) {
-                            button.playEntranceAnimation();
-                        }
-                    }
-            );
-
-            delay.setRepeats(false);
-            delay.start();
-        }
-    }
 }

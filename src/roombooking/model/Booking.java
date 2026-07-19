@@ -1,59 +1,74 @@
 package roombooking.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
-import users.BookingStatus;
+import roombooking.enums.BookingStatus;
 
 public class Booking {
 
-	public Booking(int bookingID, int userID, int roomID, LocalDateTime startTime, LocalDateTime endTime,
-			double depositAmount, double finalCost, LocalDateTime checkInTime, BookingStatus status) {
-		// TODO Auto-generated constructor stub
-	}
+    private String bookingId;
+    private Account account;
+    private Room room;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private double depositAmount;
+    private double finalCost;
+    private BookingStatus status;
+    private ArrayList<Payment> payments;
 
-	public char[] getBookingID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Booking(String bookingId, Account account, Room room, LocalDateTime startTime, LocalDateTime endTime, double depositAmount, double finalCost, BookingStatus status) {
+        this.bookingId = bookingId;
+        this.account = account;
+        this.room = room;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.depositAmount = depositAmount;
+        this.finalCost = finalCost;
+        this.status = status;
+    }
 
-	public char[] getUserID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getBookingId() {
+        return bookingId;
+    }
 
-	public char[] getRoomID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Account getAccount() {
+        return account;
+    }
 
-	public Object getStartTime() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Room getRoom() {
+        return room;
+    }
 
-	public Object getEndTime() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
 
-	public char[] getDepositAmount() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
 
-	public char[] getFinalCost() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public double getDepositAmount() {
+        return depositAmount;
+    }
 
-	public Object getCheckInTime() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public double getFinalCost() {
+        return finalCost;
+    }
 
-	public Object getStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public BookingStatus getStatus() {
+        return status;
+    }
 
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setFinalCost(double finalCost) {
+        this.finalCost = finalCost;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
 }

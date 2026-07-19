@@ -1,36 +1,64 @@
 package roombooking.model;
 
-import users.RoomStatus;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import roombooking.enums.RoomStatus;
 
 public class Room {
 
-	public Room(int roomID, int roomNumber, int capacity, String building, RoomStatus status) {
-		// TODO Auto-generated constructor stub
-	}
+    private String roomId;
+    private String buildingName;
+    private int roomNumber;
+    private int capacity;
+    private RoomStatus status;
 
-	public char[] getRoomID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private final List<Booking> bookings = new ArrayList<>();
 
-	public Object getStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Room(String roomId, String buildingName, int roomNumber, int capacity, RoomStatus status) {
+        this.roomId = roomId;
+        this.buildingName = buildingName;
+        this.roomNumber = roomNumber;
+        this.capacity = capacity;
+        this.status = status;
+    }
 
-	public char[] getRoomNumber() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getRoomId() {
+        return roomId;
+    }
 
-	public char[] getCapacity() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public int getRoomNumber() {
+        return roomNumber;
+    }
 
-	public String getBuilding() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public int getCapacity() {
+        return capacity;
+    }
 
+    public RoomStatus getStatus() {
+        return status;
+    }
+
+    public List<Booking> getBookings() {
+        return Collections.unmodifiableList(bookings);
+    }
+    
+    public void addBooking(Booking booking) {
+        if (booking != null && !bookings.contains(booking)) {
+            bookings.add(booking);
+        }
+    }
+    
+    public void removeBooking(Booking booking) {
+        bookings.remove(booking);
+    }
+    
+    public void setStatus(RoomStatus status) {
+        this.status = status;
+    }
+    
+    public String getBuildingName() {
+    	return this.buildingName;
+    }
 }

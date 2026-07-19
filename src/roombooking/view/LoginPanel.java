@@ -3,6 +3,9 @@ package roombooking.view;
 import javax.swing.*;
 
 import roombooking.repository.AccountRepository;
+import roombooking.view.RoundedButton.ButtonStyle;
+import roombooking.view.RoundedField.PlaceholderPasswordField;
+import roombooking.view.RoundedField.PlaceholderTextField;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -10,9 +13,11 @@ import java.util.Arrays;
 /**
  * Login form displayed over the permanent BackgroundInit panel.
  */
-public class LoginScreen extends JPanel implements AnimatedScreen {
+public class LoginPanel extends JPanel {
 
     private final MainFrame mainFrame;
+    
+    private final AccountRepository accountRepo;
 
     private final RoundedButton backBtn;
     private final RoundedField userNameField;
@@ -21,9 +26,10 @@ public class LoginScreen extends JPanel implements AnimatedScreen {
     private final JLabel errorLabel;
     private final JPanel inner;
 
-    public LoginScreen(MainFrame mainFrame) {
+    public LoginPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
+        this.accountRepo = new AccountRepository();
         // centers the inner login panel on the screen
         setLayout(new GridBagLayout());
         setOpaque(false);
@@ -41,7 +47,7 @@ public class LoginScreen extends JPanel implements AnimatedScreen {
         backBtn.setMaximumSize(new Dimension(90, 34));
         backBtn.setPreferredSize(new Dimension(90, 34));
 
-        backBtn.addActionListener(e -> mainFrame.showScreen(new WelcomeScreen(mainFrame)));
+        backBtn.addActionListener(e -> mainFrame.showPanel(new WelcomePanel(mainFrame)));
 
         // title text
         JLabel title = new JLabel("Login to your account");
@@ -93,10 +99,9 @@ public class LoginScreen extends JPanel implements AnimatedScreen {
             char[] passwordChars = passwordInput.getPassword();
             String password = new String(passwordChars);
 
-            if (AccountRepository.login(username, password) == true) {
+            if (accountRepo.login(username, password) == true) {
                 Arrays.fill(passwordChars, '0'); // clear password out of memory once used
-                mainFrame.dispose();
-                new AppShellFrame(username);
+                mainFrame.startMainAppShellFrame(username);
             } 
             else {
                 Arrays.fill(passwordChars, '0');
@@ -133,33 +138,5 @@ public class LoginScreen extends JPanel implements AnimatedScreen {
     // shows an error message under the password field 
     private void showLoginError(String message) {
         errorLabel.setText(message);
-    }
-
-    @Override
-    public void playEntranceAnimation() {
-        backBtn.playEntranceAnimation();
-
-        JComponent[] sequence = {userNameField, passwordField, loginBtn};
-
-        int staggerMs = 70;
-
-        for (int index = 0; index < sequence.length; index++) {
-            JComponent component = sequence[index];
-
-            Timer delay = new Timer(
-                    staggerMs * (index + 1),
-                    e -> {
-                        if (component instanceof RoundedField roundedField) {
-                            roundedField.playEntranceAnimation();
-                        } 
-                        else if (component instanceof RoundedButton button) {
-                            button.playEntranceAnimation();
-                        }
-                    }
-            );
-
-            delay.setRepeats(false);
-            delay.start();
-        }
     }
 }

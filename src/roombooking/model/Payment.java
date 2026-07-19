@@ -2,43 +2,57 @@ package roombooking.model;
 
 import java.time.LocalDateTime;
 
-import users.PaymentType;
+import roombooking.enums.PaymentMethod;
+import roombooking.enums.PaymentType;
+import roombooking.strategy.PaymentProcessorStrategy;
 
+// stores one payment made for a booking
 public class Payment {
 
-	public Payment(int paymentID, int bookingID, double amount, LocalDateTime paymentDate, PaymentType paymentType,
-			PaymentMethod paymentMethod) {
-		// TODO Auto-generated constructor stub
-	}
+    private String paymentId;
+    private String bookingId;
+    private double amount;
+    private LocalDateTime paymentDate;
+    private PaymentType paymentType;
+    private PaymentMethod paymentMethod;
+    private PaymentProcessorStrategy paymentProcessor;
 
-	public char[] getPaymentID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Payment(String paymentId, String bookingId, double amount, LocalDateTime paymentDate, PaymentType paymentType, 
+    		PaymentMethod paymentMethod, PaymentProcessorStrategy paymentProcessor) {
+        this.paymentId = paymentId;
+        this.bookingId = bookingId;
+        this.amount = amount;
+        this.paymentDate = paymentDate;
+        this.paymentType = paymentType;
+        this.paymentMethod = paymentMethod;
+        this.paymentProcessor = paymentProcessor;
+    }
 
-	public char[] getBookingID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getPaymentId() {
+        return paymentId;
+    }
 
-	public char[] getAmount() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getBookingId() {
+        return bookingId;
+    }
 
-	public Object getPaymentDate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public double getAmount() {
+        return amount;
+    }
 
-	public Object getPaymentType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
+    }
 
-	public Object getPaymentMethod() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
 
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+    
+    public PaymentProcessorStrategy getPaymentProcessorStrategy() {
+    	return paymentProcessor;
+    }
 }

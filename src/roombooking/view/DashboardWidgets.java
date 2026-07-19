@@ -28,9 +28,7 @@ final class DashboardWidgets {
 
     private DashboardWidgets() {}
 
-    // -----------------------------------------------------------------
-    // GLASS PANEL - translucent rounded card, the base look for every widget
-    // -----------------------------------------------------------------
+    // translucent rounded card
     static class GlassPanel extends JPanel {
         private final int arc;
 
@@ -61,9 +59,7 @@ final class DashboardWidgets {
         }
     }
 
-    // -----------------------------------------------------------------
-    // ICON GLYPHS - minimalist hand-drawn icons, no external image assets needed
-    // -----------------------------------------------------------------
+    // icons 
     enum Glyph { HOME, SEARCH, CALENDAR, STAR, SETTINGS, LIST, PLUS, LOGOUT, GRID, PEOPLE, PLAY, CHEVRON_RIGHT }
 
     static void drawGlyph(Graphics2D g2, Glyph glyph, int w, int h, Color color) {

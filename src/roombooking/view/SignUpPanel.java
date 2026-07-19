@@ -4,27 +4,38 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import roombooking.enums.AccountType;
+import roombooking.view.RoundedButton.ButtonStyle;
+import roombooking.view.RoundedField.PlaceholderPasswordField;
+import roombooking.view.RoundedField.PlaceholderTextField;
+import roombooking.factory.*;
 
 /**
  * Account creation form displayed over the permanent BackgroundInit panel
  */
-public class SignUpScreen extends JPanel implements AnimatedScreen {
+public class SignUpPanel extends JPanel {
 
-    // Main frame reference used for screen navigation
+    // main frame reference used for screen navigation
     private final MainFrame mainFrame;
 
-    // Input components
+    // input components
     private final RoundedField usernameField;
     private final RoundedField emailField;
     private final RoundedField idNumberField;
     private final RoundedField passwordField;
+    
+    // error text
+    private final JLabel errorLabel;
 
-    // Screen buttons
+    // screen buttons
     private final RoundedButton backBtn;
     private final RoundedButton createAccountBtn;
+    
+    private final AccountType accountType;
 
-    public SignUpScreen(MainFrame mainFrame, AccountType acctype) {
+    public SignUpPanel(MainFrame mainFrame, AccountType accountType) {
         this.mainFrame = mainFrame;
+        
+        this.accountType = accountType;
 
         // Centers the account creation form
         setLayout(new GridBagLayout());
@@ -53,7 +64,7 @@ public class SignUpScreen extends JPanel implements AnimatedScreen {
         backBtn.setPreferredSize(new Dimension(100, 34));
 
         backBtn.addActionListener(event ->
-                mainFrame.showScreen(new AccountTypeScreen(mainFrame))
+                mainFrame.showPanel(new AccountTypePanel(mainFrame))
         );
 
         // title
@@ -80,15 +91,21 @@ public class SignUpScreen extends JPanel implements AnimatedScreen {
 
         
         // ID number input
-        RoundedField.PlaceholderTextField idNumberInput = new RoundedField.PlaceholderTextField(getIDField(acctype));
+        RoundedField.PlaceholderTextField idNumberInput = new RoundedField.PlaceholderTextField(getIDField());
         idNumberField = createRoundedField(idNumberInput);
 
         // password input
-        RoundedField.PlaceholderPasswordField passwordInput =
-                new RoundedField.PlaceholderPasswordField("Password");
-
+        RoundedField.PlaceholderPasswordField passwordInput = new RoundedField.PlaceholderPasswordField("Password");
         passwordField = createRoundedField(passwordInput);
 
+        // error label
+        errorLabel = new JLabel(" ");
+        errorLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        errorLabel.setForeground(new Color(0xFF, 0x6B, 0x6B));
+        errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        errorLabel.setMaximumSize(new Dimension(348, 18));
+        
         // create account button
         createAccountBtn = new RoundedButton(
                 "CREATE ACCOUNT",
@@ -108,30 +125,44 @@ public class SignUpScreen extends JPanel implements AnimatedScreen {
             String email = emailInput.getText().trim();
             String idNumber = idNumberInput.getText().trim();
             char[] password = passwordInput.getPassword();
-
+            
+            AccountFactory accountFactory = getAccountFactory();
             if (username.isEmpty() || email.isEmpty() || idNumber.isEmpty() || password.length == 0) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Please complete every field",
-                        "Missing Information",
-                        JOptionPane.WARNING_MESSAGE
-                );
-
+            	setErrorLabel("Please enter all the fields.");
                 Arrays.fill(password, '\0');
                 return;
             }
-
-            System.out.println("Create account clicked");
-            System.out.println("Username: " + username);
-            System.out.println("Email: " + email);
-            System.out.println("ID Number: " + idNumber);
-            System.out.println("Password length: " + password.length);
-
-            // Clear the password from memory after it is used
+            
+            else if(!accountFactory.CheckForStrongPassword(new String(password))){
+            	setErrorLabel("Password: 8 characters, uppercase, lowercase, and symbol.");
+            	return;
+            }
+            
+            else if(!accountFactory.CheckForValidEmail(email)) {
+            	setErrorLabel("Enter a valid email.");
+            	return;
+            }
+            
+            else if(accountFactory.CheckForUniqueEmail(email)) {
+            	setErrorLabel("Email was taken.");
+            	return;
+            }
+            
+            else if(accountFactory.CheckForUniqueUsername(username)) {
+            	setErrorLabel("Username was taken.");
+            	return;
+            }
+            
+            else if (accountFactory.checkForUniqueID(idNumber)) {
+                setErrorLabel("ID number was already used.");
+                return;
+            }
+            // create account and store in database
+            accountFactory.createAccount(username, new String(password), email, idNumber);
+            // clear password from memory
             Arrays.fill(password, '\0');
-
-            // Later connect this to an account controller
-            // accountController.createAccount(name, email, idNumber, password)
+            // start mainapp
+            this.mainFrame.startMainAppShellFrame(username);
         });
 
         // Add screen components
@@ -148,7 +179,9 @@ public class SignUpScreen extends JPanel implements AnimatedScreen {
         inner.add(idNumberField);
         inner.add(Box.createVerticalStrut(14));
         inner.add(passwordField);
-        inner.add(Box.createVerticalStrut(28));
+        inner.add(Box.createVerticalStrut(12));
+        inner.add(errorLabel);
+        inner.add(Box.createVerticalStrut(10));
         inner.add(createAccountBtn);
 
         // Centers the inner panel without stretching it
@@ -162,10 +195,10 @@ public class SignUpScreen extends JPanel implements AnimatedScreen {
     }
     
     //gets the string of the id field display (student#, faculty#...)
-    private String getIDField(AccountType acctype) {
+    private String getIDField() {
     	String label;
 
-        switch (acctype) {
+        switch (this.accountType) {
             case STUDENT:
                 label = "Student Number";
                 break;
@@ -179,7 +212,7 @@ public class SignUpScreen extends JPanel implements AnimatedScreen {
                 label = "Organization ID";
                 break;
             default:
-                throw new IllegalArgumentException("Unknown account type: " + acctype);
+                throw new IllegalArgumentException("Unknown account type: " + this.accountType);
         }
 
         return label;
@@ -196,35 +229,34 @@ public class SignUpScreen extends JPanel implements AnimatedScreen {
 
         return field;
     }
-
-    // Plays the staggered field and button entrance animation
-    @Override
-    public void playEntranceAnimation() {
-        backBtn.playEntranceAnimation();
-
-        JComponent[] sequence = {
-                usernameField,
-                emailField,
-                idNumberField,
-                passwordField,
-                createAccountBtn
-        };
-
-        int staggerMs = 65;
-
-        for (int index = 0; index < sequence.length; index++) {
-            JComponent component = sequence[index];
-
-            Timer delay = new Timer(staggerMs * (index + 1), event -> {
-                if (component instanceof RoundedField roundedField) {
-                    roundedField.playEntranceAnimation();
-                } else if (component instanceof RoundedButton roundedButton) {
-                    roundedButton.playEntranceAnimation();
-                }
-            });
-
-            delay.setRepeats(false);
-            delay.start();
-        }
+    
+    private void setErrorLabel(String errorMsg) {
+    	errorLabel.setText(errorMsg);
+    	 Timer timer = new Timer(3000, e -> errorLabel.setText(""));
+    	 timer.setRepeats(false);
+    	 timer.start();
     }
+    
+    private AccountFactory getAccountFactory() {
+    	AccountFactory accountFactory;
+    	switch (this.accountType) {
+        	case STUDENT:
+        		accountFactory = new StudentAccountFactory();
+        		break;
+        	case FACULTY:
+        		accountFactory = new FacultyAccountFactory();
+        		break;
+        	case STAFF:
+        		accountFactory = new StaffAccountFactory();
+        		break;
+        	case PARTNER:
+        		accountFactory = new PartnerAccountFactory();
+        		break;
+        	default:
+        		throw new IllegalArgumentException("Unknown account type: " + this.accountType);	
+    	}
+    	
+    	return accountFactory;
+    }
+
 }

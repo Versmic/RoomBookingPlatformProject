@@ -4,5 +4,7 @@ public enum AccountType {
 	STUDENT,
 	STAFF,
 	FACULTY,
-	PARTNER
+	PARTNER,
+	ADMIN,
+	CHEIF
 }

@@ -1,10 +1,7 @@
-package roombooking.model;
+package roombooking.enums;
 
-public class PaymentMethod {
-
-	public static PaymentMethod valueOf(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+public enum PaymentMethod {
+	CREDITCARD,
+	DEBITCARD,
+	INSTITUTIONALBILLING
 }

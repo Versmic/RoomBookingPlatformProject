@@ -1,6 +1,9 @@
 package roombooking.view;
 
 import javax.swing.*;
+
+import roombooking.view.RoundedButton.ButtonStyle;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -14,7 +17,7 @@ import java.awt.geom.RoundRectangle2D;
  * - AccountTypeScreen
  * - Guest flow
  */
-public class WelcomeScreen extends JPanel implements AnimatedScreen {
+public class WelcomePanel extends JPanel {
 
     // main frame reference used for screen navigation
     private final MainFrame mainFrame;
@@ -22,9 +25,8 @@ public class WelcomeScreen extends JPanel implements AnimatedScreen {
     // buttons are fields so they can be animated when the screen appears
     private final RoundedButton loginBtn;
     private final RoundedButton signUpBtn;
-    private final RoundedButton guestBtn;
 
-    public WelcomeScreen(MainFrame mainFrame) {
+    public WelcomePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
         // centers and stretches the inner content panel
@@ -57,10 +59,10 @@ public class WelcomeScreen extends JPanel implements AnimatedScreen {
         signUpBtn = new RoundedButton("SIGN UP", Colours.TURQUOISE, Colours.DARK_TEAL, Colours.TEXT_LIGHT, RoundedButton.ButtonStyle.GRADIENT_FILL);
 
         // guest button
-        guestBtn = new RoundedButton("CONTINUE AS GUEST", Color.decode("#0D8FA5"), Color.decode("#4A74D9"), Colours.TEXT_LIGHT, RoundedButton.ButtonStyle.GRADIENT_FILL);
+        //guestBtn = new RoundedButton("CONTINUE AS GUEST", Color.decode("#0D8FA5"), Color.decode("#4A74D9"), Colours.TEXT_LIGHT, RoundedButton.ButtonStyle.GRADIENT_FILL);
 
         // Give all buttons equal sizing and alignment
-        RoundedButton[] buttons = {loginBtn, signUpBtn, guestBtn};
+        RoundedButton[] buttons = {loginBtn, signUpBtn};
         for (RoundedButton button : buttons) {
             button.setAlignmentX(Component.LEFT_ALIGNMENT);
             button.setMaximumSize(
@@ -69,20 +71,12 @@ public class WelcomeScreen extends JPanel implements AnimatedScreen {
         }
 
         // login button action listener to navigate to the login screen
-        loginBtn.addActionListener(e -> mainFrame.showScreen(new LoginScreen(mainFrame)));
+        loginBtn.addActionListener(e -> mainFrame.showPanel(new LoginPanel(mainFrame)));
 
         // sign up button action listener to navigate to the login screen
-        signUpBtn.addActionListener(e -> mainFrame.showScreen(new AccountTypeScreen(mainFrame)));
+        signUpBtn.addActionListener(e -> mainFrame.showPanel(new AccountTypePanel(mainFrame)));
 
-        // temporary guest action
-        guestBtn.addActionListener(event -> {
-            System.out.println(
-                    "Continue as Guest clicked - wire up guest flow here"
-            );
-
-            // Later:
-            // mainFrame.showScreen(new GuestHomeScreen(mainFrame));
-        });
+    
 
         // add title and subtitl.
         inner.add(title);
@@ -90,14 +84,12 @@ public class WelcomeScreen extends JPanel implements AnimatedScreen {
         inner.add(subtitle);
 
         // large space between the heading and buttons
-        inner.add(Box.createVerticalStrut(190));
+        inner.add(Box.createVerticalStrut(220));
 
         // add buttons with spacing
         inner.add(loginBtn);
         inner.add(Box.createVerticalStrut(14));
         inner.add(signUpBtn);
-        inner.add(Box.createVerticalStrut(14));
-        inner.add(guestBtn);
 
         // make the inner panel fill the screen with padding
         GridBagConstraints constraints = new GridBagConstraints();
@@ -108,20 +100,4 @@ public class WelcomeScreen extends JPanel implements AnimatedScreen {
 
         add(inner, constraints);
     }
-
-    /**
-     * Plays the staggered entrance animation for the welcome buttons.
-     */
-    @Override
-    public void playEntranceAnimation() {
-        RoundedButton[] buttons = {loginBtn, signUpBtn, guestBtn};
-        int staggerMs = 70;
-        for (int index = 0; index < buttons.length; index++) {
-            RoundedButton button = buttons[index];
-            Timer delay = new Timer(staggerMs * index, e -> button.playEntranceAnimation());
-            delay.setRepeats(false);
-            delay.start();
-        }
-    }
-
 }
