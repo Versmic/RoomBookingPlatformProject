@@ -14,10 +14,11 @@ public class DebitCardProcessorStrategy implements PaymentProcessorStrategy {
 	@Override
 	public boolean processPayment(ArrayList<String> paymentDetails) {
 		boolean name = paymentDetails.get(0).matches("\\S+ \\S+");
+		
 		String cardNumbers = paymentDetails.get(1).replaceAll("[ -]", "");
 		boolean cardNumber = cardNumbers.matches("\\d{16}");	
-		boolean expiry = paymentDetails.get(2).matches("^(0[1-9]|1[0-2])/\\d{2}");
 		
+		boolean expiry = paymentDetails.get(2).matches("^(0[1-9]|1[0-2])/\\d{2}");
 		
 		boolean pinNumber = paymentDetails.get(3).length() == 4;
 		

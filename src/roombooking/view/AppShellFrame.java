@@ -30,7 +30,7 @@ public class AppShellFrame extends JFrame {
     private final String userName;
 
     public AppShellFrame(String userName) {
-        this.userName = userName;
+        this.userName = userName.toLowerCase();
 
         accountRepo = new AccountRepository();
         loggedInAccount = accountRepo.findAccountByUserName(userName);
@@ -59,7 +59,7 @@ public class AppShellFrame extends JFrame {
             new MainFrame();
         };
 
-        root.add(new AppSideBarPanel(userName, loggedInAccount.getEmail(), isChief, canManageRooms, onSignOut, this::showDashboard, this::showBookingTimeSelection, this::showMyBookings, this::showGenerateAdmin, this::showRoomManagement), BorderLayout.WEST);
+        root.add(new AppSideBarPanel(this.userName, loggedInAccount.getEmail(), isChief, canManageRooms, onSignOut, this::showDashboard, this::showBookingTimeSelection, this::showMyBookings, this::showGenerateAdmin, this::showRoomManagement), BorderLayout.WEST);
 
         showDashboard();
         setVisible(true);

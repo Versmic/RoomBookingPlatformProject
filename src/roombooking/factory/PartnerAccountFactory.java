@@ -8,7 +8,7 @@ import roombooking.repository.AccountRepository;
 public class PartnerAccountFactory extends AccountFactory {
 
 	@Override
-	public Account createAccount(String username, String email, String password, String idNumber) {
+	public Account createAccount(String username, String password, String email, String idNumber) {
 		Partner partner = new Partner(idNumber);
 		Account account = new Account(username, password, email, AccountType.PARTNER, partner);
 		

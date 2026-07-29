@@ -66,9 +66,9 @@ public class AppPayDepositPanel extends JPanel {
 
     // builds the booking payment summary
     private JComponent buildPaymentCard(Account account, Room room, LocalDateTime startTime, LocalDateTime endTime, Runnable onSuccess, Consumer<JComponent> showPanel) {
-        double finalCost = bookingController.calculateFinalCost(account, startTime, endTime);
+        double totalCost = bookingController.calculateTotalCost(account, startTime, endTime);
         double depositAmount = bookingController.calculateInitialDeposit(account);
-        double remainingBalance = Math.max(0, finalCost - depositAmount);
+        double remainingBalance = Math.max(0, totalCost - depositAmount);
 
         JPanel card = new JPanel();
         card.setOpaque(true);
@@ -88,7 +88,7 @@ public class AppPayDepositPanel extends JPanel {
         card.add(buildDivider());
         card.add(Box.createVerticalStrut(20));
 
-        card.add(buildAmountRow("Total booking cost", finalCost));
+        card.add(buildAmountRow("Total booking cost", totalCost));
         card.add(Box.createVerticalStrut(14));
         card.add(buildAmountRow("Deposit due now", depositAmount));
         card.add(Box.createVerticalStrut(14));
@@ -100,7 +100,7 @@ public class AppPayDepositPanel extends JPanel {
         card.add(note);
         card.add(Box.createVerticalGlue());
 
-        card.add(buildPaymentButtonRow(account, room, startTime, endTime, depositAmount, finalCost, onSuccess, showPanel));
+        card.add(buildPaymentButtonRow(account, room, startTime, endTime, depositAmount, totalCost, onSuccess, showPanel));
 
         JPanel wrapper = new JPanel(new GridBagLayout());
         wrapper.setOpaque(false);
@@ -112,7 +112,7 @@ public class AppPayDepositPanel extends JPanel {
     // builds the payment method buttons - each one navigates to its own payment form,
     // passing the deposit amount, a way back to this screen, and a way to reach the
     // dashboard on success
-    private JPanel buildPaymentButtonRow(Account account, Room room, LocalDateTime startTime, LocalDateTime endTime, double depositAmount, double finalCost,Runnable onSuccess, Consumer<JComponent> showPanel) {
+    private JPanel buildPaymentButtonRow(Account account, Room room, LocalDateTime startTime, LocalDateTime endTime, double depositAmount, double totalCost,Runnable onSuccess, Consumer<JComponent> showPanel) {
         JPanel buttonRow = new JPanel(new GridLayout(1, 3, 12, 0));
         buttonRow.setOpaque(false);
         buttonRow.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -124,9 +124,9 @@ public class AppPayDepositPanel extends JPanel {
 
         Runnable backToThisScreen = () -> showPanel.accept(this);
 
-        debitBtn.addActionListener(e -> showPanel.accept(new AppPayDepositDebitCard(depositAmount, backToThisScreen, onSuccess, account, room, startTime, endTime, finalCost)));
-        creditBtn.addActionListener(e -> showPanel.accept(new AppPayDepositCreditCard(depositAmount, backToThisScreen, onSuccess, account, room, startTime, endTime, finalCost)));
-        institutionalBtn.addActionListener(e -> showPanel.accept(new AppPayDepositInstitutionalBilling(depositAmount, backToThisScreen, onSuccess, account, room, startTime, endTime, finalCost)));
+        debitBtn.addActionListener(e -> showPanel.accept(new AppPayDepositDebitCard(depositAmount, backToThisScreen, onSuccess, account, room, startTime, endTime, totalCost)));
+        creditBtn.addActionListener(e -> showPanel.accept(new AppPayDepositCreditCard(depositAmount, backToThisScreen, onSuccess, account, room, startTime, endTime, totalCost)));
+        institutionalBtn.addActionListener(e -> showPanel.accept(new AppPayDepositInstitutionalBilling(depositAmount, backToThisScreen, onSuccess, account, room, startTime, endTime, totalCost)));
 
         buttonRow.add(debitBtn);
         buttonRow.add(creditBtn);

@@ -25,6 +25,10 @@ public class AccountRepository {
     private static final SingletonCSVDatabaseManager db = SingletonCSVDatabaseManager.getInstance();
 
     public void saveAccount(Account account) {
+    	if(account == null) {
+    		return;
+    	}
+    	
         ArrayList<String[]> rows = db.readCSV(FILE_NAME);
         rows.add(toRow(account));
         db.writeCSV(FILE_NAME, rows);
@@ -35,10 +39,12 @@ public class AccountRepository {
     }
 
     public void deleteUser(String userName) {
+    	userName = userName.toLowerCase();
         db.deleteRow(FILE_NAME, USERNAME_COLUMN, String.valueOf(userName));
     }
 
     public Account findAccountByUserName(String userName) {
+    	userName = userName.toLowerCase();
         for (String[] row : db.readCSV(FILE_NAME)) {
             if (row.length > USERNAME_COLUMN && row[USERNAME_COLUMN].equals(String.valueOf(userName))) {
                 return toAccount(row);

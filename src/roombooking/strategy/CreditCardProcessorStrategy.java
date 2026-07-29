@@ -13,14 +13,15 @@ public class CreditCardProcessorStrategy implements PaymentProcessorStrategy{
 	@Override
 	public boolean processPayment(ArrayList<String> paymentDetails) {
 		boolean name = paymentDetails.get(0).matches("\\S+ \\S+");
+		
 		String cardNumbers = paymentDetails.get(1).replaceAll("[ -]", "");
 		boolean cardNumber = cardNumbers.matches("\\d{16}");	
+		
 		boolean expiry = paymentDetails.get(2).matches("^(0[1-9]|1[0-2])/\\d{2}");
 		
+		boolean cvv = paymentDetails.get(3).length() == 3;
 		
-		boolean pinNumber = paymentDetails.get(3).length() == 3;
-		
-		if(name && cardNumber && expiry && pinNumber) {
+		if(name && cardNumber && expiry && cvv) {
 			return true; 
 		}
 		

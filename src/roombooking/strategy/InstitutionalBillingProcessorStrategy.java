@@ -6,6 +6,7 @@ public class InstitutionalBillingProcessorStrategy implements PaymentProcessorSt
 	
 	@Override
 	public boolean processPayment(ArrayList<String> paymentDetails) {
-		return true;
+		if (paymentDetails.size() != 4) return false;
+		else return true;
 	}
 }

@@ -6,7 +6,7 @@ import roombooking.repository.AccountRepository;
 
 public abstract class AccountFactory {
 	
-	public abstract Account createAccount(String username, String email, String password, String idNumber);
+	public abstract Account createAccount(String username, String password, String email, String idNumber);
 	
 	public boolean CheckForStrongPassword(String password) {
 		

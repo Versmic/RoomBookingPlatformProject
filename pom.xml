@@ -13,6 +13,18 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <dependencies>
+    <!-- no <scope>test</scope> here on purpose - sourceDirectory below is
+         plain "src", so everything under src (including test classes)
+         compiles as main code. A test-scoped dependency only lands on the
+         test classpath, which would leave this import unresolved anyway. -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <sourceDirectory>src</sourceDirectory>
 

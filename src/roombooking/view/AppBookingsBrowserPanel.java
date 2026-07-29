@@ -41,9 +41,7 @@ public class AppBookingsBrowserPanel extends JPanel {
         backBtn.setMaximumSize(new Dimension(90, 34));
         backBtn.setPreferredSize(new Dimension(90, 34));
         backBtn.addActionListener(e -> {
-            if (onBack != null) {
-                onBack.run();
-            }
+            if (onBack != null) onBack.run();
         });
 
         JLabel title = new JLabel("My Bookings");
@@ -78,10 +76,7 @@ public class AppBookingsBrowserPanel extends JPanel {
         } else {
             for (int i = 0; i < bookings.size(); i++) {
                 list.add(buildBookingCard(bookings.get(i), onExtend));
-
-                if (i < bookings.size() - 1) {
-                    list.add(Box.createVerticalStrut(12));
-                }
+                if (i < bookings.size() - 1) list.add(Box.createVerticalStrut(12));
             }
         }
 
@@ -109,10 +104,9 @@ public class AppBookingsBrowserPanel extends JPanel {
         JPanel card = new JPanel(new BorderLayout(16, 0));
         card.setOpaque(true);
         card.setBackground(new Color(20, 22, 30));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 105));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 145));
         card.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(CARD_BORDER, 1, true), BorderFactory.createEmptyBorder(14, 18, 14, 18)));
 
-        // booking information
         JPanel textBox = new JPanel();
         textBox.setOpaque(false);
         textBox.setLayout(new BoxLayout(textBox, BoxLayout.Y_AXIS));
@@ -146,34 +140,52 @@ public class AppBookingsBrowserPanel extends JPanel {
         return card;
     }
 
-    // builds the status and extend button section
+    // builds the status and booking action section
     private JPanel buildActionPanel(Booking booking, Consumer<Booking> onExtend) {
         JPanel actionPanel = new JPanel();
         actionPanel.setOpaque(false);
         actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
+        refreshActionPanel(actionPanel, booking, onExtend);
+        return actionPanel;
+    }
 
-        JLabel statusLabel = buildStatusLabel(booking);
-        actionPanel.add(statusLabel);
+    // redraws the action section when the booking status changes
+    private void refreshActionPanel(JPanel actionPanel, Booking booking, Consumer<Booking> onExtend) {
+        actionPanel.removeAll();
+        actionPanel.add(buildStatusLabel(booking));
 
         if (booking.getStatus() == BookingStatus.ACTIVE) {
             RoundedButton extendBookingBtn = new RoundedButton("Extend", Colours.PURPLE, Colours.BLUE, Colours.TEXT_LIGHT, RoundedButton.ButtonStyle.GRADIENT_FILL);
             extendBookingBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            extendBookingBtn.setMaximumSize(new Dimension(120, 34));
-            extendBookingBtn.setPreferredSize(new Dimension(120, 34));
-
-            // hands the clicked booking up to whoever owns navigation (AppShellFrame),
-            // which is what actually opens AppExtendBookingPanel
+            extendBookingBtn.setMaximumSize(new Dimension(130, 34));
+            extendBookingBtn.setPreferredSize(new Dimension(130, 34));
             extendBookingBtn.addActionListener(e -> {
-                if (onExtend != null) {
-                    onExtend.accept(booking);
+                if (onExtend != null) onExtend.accept(booking);
+            });
+
+            RoundedButton cancelBookingBtn = new RoundedButton("Cancel Booking", new Color(0xB8, 0x3A, 0x4B), new Color(0xD9, 0x4A, 0x5E), Colours.TEXT_LIGHT, RoundedButton.ButtonStyle.GRADIENT_FILL);
+            cancelBookingBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            cancelBookingBtn.setMaximumSize(new Dimension(130, 34));
+            cancelBookingBtn.setPreferredSize(new Dimension(130, 34));
+            cancelBookingBtn.setFont(new Font("SansSerif", Font.BOLD, 11));
+            cancelBookingBtn.addActionListener(e -> {
+                boolean cancelled = bookingController.cancelBooking(booking);
+
+                if (cancelled) {
+                    refreshActionPanel(actionPanel, booking, onExtend);
+                } else {
+                    JOptionPane.showMessageDialog(this, "This booking cannot be cancelled after its start time.", "Cancellation Failed", JOptionPane.ERROR_MESSAGE);
                 }
             });
 
             actionPanel.add(Box.createVerticalStrut(8));
             actionPanel.add(extendBookingBtn);
+            actionPanel.add(Box.createVerticalStrut(6));
+            actionPanel.add(cancelBookingBtn);
         }
 
-        return actionPanel;
+        actionPanel.revalidate();
+        actionPanel.repaint();
     }
 
     // displays the booking status
@@ -183,8 +195,8 @@ public class AppBookingsBrowserPanel extends JPanel {
         statusLabel.setForeground(Colours.TEXT_LIGHT);
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        statusLabel.setMaximumSize(new Dimension(120, 30));
-        statusLabel.setPreferredSize(new Dimension(120, 30));
+        statusLabel.setMaximumSize(new Dimension(130, 30));
+        statusLabel.setPreferredSize(new Dimension(130, 30));
         statusLabel.setOpaque(true);
         statusLabel.setBackground(new Color(0x33, 0x3E, 0x55));
         statusLabel.setBorder(BorderFactory.createEmptyBorder(7, 10, 7, 10));

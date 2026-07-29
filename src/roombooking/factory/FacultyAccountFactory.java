@@ -8,7 +8,7 @@ import roombooking.model.Account;
 public class FacultyAccountFactory extends AccountFactory {
 
 	@Override
-	public Account createAccount(String username, String email, String password, String idNumber) {
+	public Account createAccount(String username, String password, String email, String idNumber) {
 		Faculty faculty = new Faculty(idNumber);
 		Account account = new Account(username, password, email, AccountType.FACULTY, faculty);
 		

@@ -16,8 +16,9 @@ public class Account {
 
     private final List<Booking> bookings = new ArrayList<>();
 
+    
     public Account(String userName, String password, String email, AccountType accountType, RegisteredUser registeredUser) {
-        this.userName = userName;
+        this.userName = userName.toLowerCase();
         this.password = password;
         this.email = email;
         this.accountType = accountType;

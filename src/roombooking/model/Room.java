@@ -23,6 +23,7 @@ public class Room {
         this.capacity = capacity;
         this.status = status;
     }
+    
 
     public String getRoomId() {
         return roomId;

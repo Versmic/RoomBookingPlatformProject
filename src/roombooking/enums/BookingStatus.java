@@ -2,7 +2,7 @@ package roombooking.enums;
 
 public enum BookingStatus {
 	ACTIVE,
-	CANCELED,
+	CANCELLED,
 	NOSHOW,
 	COMPLETED	
 }

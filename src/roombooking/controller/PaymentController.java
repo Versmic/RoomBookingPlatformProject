@@ -18,6 +18,9 @@ public class PaymentController {
     private final PaymentRepository paymentRepository = new PaymentRepository();                                 
     
     public boolean processPayment(double amount, PaymentMethod paymentMethod, ArrayList<String> paymentDetails) {
+    	if(amount < 0) {
+    		return false;
+    	}
     	PaymentProcessorStrategy paymentProcessor = createPaymentProcessor(paymentMethod);
     	return paymentProcessor.processPayment(paymentDetails);   	
     }

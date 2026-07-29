@@ -30,10 +30,13 @@ public class BookingController {
     	return availableRooms; 
     }
     
-    public double calculateFinalCost(Account account, LocalDateTime startTime, LocalDateTime endTime) {
+    public double calculateTotalCost(Account account, LocalDateTime startTime, LocalDateTime endTime) {
     	double hourlyRate = account.getRegisteredUser().getHRate();
-    	long hours = Duration.between(startTime, endTime).toHours();
-    	return hours * hourlyRate; 
+    	long minutes = Duration.between(startTime, endTime).toMinutes();
+    	double hours = minutes / 60.0;
+    	double totalCost = hours * hourlyRate; 
+    	
+    	return Math.round(totalCost * 100.0) / 100.0;
     	
     }
     
@@ -97,8 +100,9 @@ public class BookingController {
 	     for (Booking booking : bookingRepository.getAllBookings()) {
 	         boolean sameRoom = booking.getRoom().getRoomId().equalsIgnoreCase(room.getRoomId());
 	         boolean overlaps = booking.getStartTime().isBefore(endTime) && booking.getEndTime().isAfter(startTime);
-
-	         if (sameRoom && overlaps) {
+	         boolean activeBooking = booking.getStatus() == BookingStatus.ACTIVE;
+	         
+	         if (sameRoom && overlaps && activeBooking) {
 	             return false;
 	         }
 	     }
@@ -142,6 +146,15 @@ public class BookingController {
 		    booking.setFinalCost(booking.getFinalCost() + extensionCost);
 		    bookingRepository.updateBooking(booking);
 
+		    return true;
+		}
+	 
+	 public boolean cancelBooking(Booking booking) {
+		    if (booking == null || booking.getStatus() != BookingStatus.ACTIVE) return false;
+		    if (!LocalDateTime.now().isBefore(booking.getStartTime())) return false;
+
+		    booking.setStatus(BookingStatus.CANCELLED);
+		    bookingRepository.updateBooking(booking);
 		    return true;
 		}
 
