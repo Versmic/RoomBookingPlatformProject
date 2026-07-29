@@ -1,6 +1,7 @@
 package roombooking.view;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 /**
@@ -10,7 +11,7 @@ import java.awt.*;
  */
 public class MainFrame extends JFrame {
 
-    private final BackgroundInit backgroundInit;
+    private final BackgroundInitFrame backgroundInitFrame;
 
     public MainFrame() {
         setTitle("RoomBookingPlatform");
@@ -21,17 +22,23 @@ public class MainFrame extends JFrame {
         setResizable(false);
         
         // use backgroundinit as the main panel
-        backgroundInit = new BackgroundInit(); 
-        setContentPane(backgroundInit);
+        backgroundInitFrame = new BackgroundInitFrame(); 
+        setContentPane(backgroundInitFrame);
         // display welcome screen infront of backgroundinit
-        backgroundInit.showInitialScreen(new WelcomeScreen(this)); // 
+        backgroundInitFrame.showInitialScreen(new WelcomePanel(this));
         setVisible(true);
     }
 
-    /** Uses a fade-and-scale content transition; the background stays fixed. */
-    public void showScreen(JPanel screen) {
-        backgroundInit.transitionTo(screen);
+    // transitions between the initial screens
+    public void showPanel(JPanel panel) {
+    	backgroundInitFrame.transitionTo(panel);
     }
     
+    // create the our main app shell frame
+    public void startMainAppShellFrame(String username) {
+    	dispose();
+        new AppShellFrame(username);
+	
+    }
     
 }
