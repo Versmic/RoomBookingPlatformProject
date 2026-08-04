@@ -22,7 +22,7 @@ public class Admin extends RegisteredUser{
 		roomRepo.updateRoom(room);
     }
     
-    public void maintainenceRoom(Room room) {
+    public void maintenanceRoom(Room room) {
     	room.setStatus(RoomStatus.MAINTENANCE);
     	RoomRepository roomRepo = new RoomRepository();
 		roomRepo.updateRoom(room);

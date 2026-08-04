@@ -26,13 +26,8 @@ public class ChiefEventCoordinator extends RegisteredUser {
 
         Admin admin = new Admin(adminId);
 
-        Account account = new Account(
-                cleanedUsername,
-                password,
-                cleanedEmail,
-                AccountType.ADMIN,
-                admin
-        );
+        Account account = new Account(cleanedUsername, password,
+                cleanedEmail, AccountType.ADMIN, admin);
 
         accountRepository.saveAccount(account);
         return account;

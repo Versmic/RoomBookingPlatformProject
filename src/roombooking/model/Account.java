@@ -30,6 +30,7 @@ public class Account {
     }
 
     public void setUserName(String userName) {
+    	userName = userName.toLowerCase();
         this.userName = userName;
     }
 

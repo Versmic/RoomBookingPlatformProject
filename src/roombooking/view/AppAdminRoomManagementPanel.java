@@ -156,7 +156,7 @@ public class AppAdminRoomManagementPanel extends JPanel {
         maintenanceBtn.addActionListener(e -> {
         	if(this.account.getAccountType() == AccountType.ADMIN) {
             	Admin admin = (Admin) account.getRegisteredUser();
-            	admin.maintainenceRoom(room);
+            	admin.maintenanceRoom(room);
             }
             else {
             	ChiefEventCoordinator cheif = (ChiefEventCoordinator) account.getRegisteredUser();
