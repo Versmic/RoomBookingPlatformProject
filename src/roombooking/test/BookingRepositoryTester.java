@@ -321,4 +321,133 @@ public class BookingRepositoryTester {
 			roomRepo.deleteRoom(room.getRoomId());
 		}
 	}
+	
+	
+	
+	/*
+	 * this test ensures that findBookingsByRoomId()
+	 * returns all bookings belonging to the correct room
+	 */
+	@Test
+	public void findBookingsByRoomId() {
+		
+		BookingRepository bookingRepo = new BookingRepository();
+		AccountRepository accountRepo = new AccountRepository();
+		RoomRepository roomRepo = new RoomRepository();
+		
+		Room room = new Room("testRoom", "testRoomName", 0, 0, RoomStatus.AVAILABLE);
+		
+		Student student = new Student("test");
+		Account account = new Account("testuser", "password", "test@test.com", AccountType.STUDENT, student);
+		
+		LocalDateTime firstStartTime = LocalDateTime.of(2026, 12, 25, 9, 0);
+		LocalDateTime firstEndTime = LocalDateTime.of(2026, 12, 25, 11, 0);
+		
+		LocalDateTime secondStartTime = LocalDateTime.of(2026, 12, 26, 9, 0);
+		LocalDateTime secondEndTime = LocalDateTime.of(2026, 12, 26, 11, 0);
+		
+		Booking firstBooking = new Booking("testBookingOne", account, room, firstStartTime, firstEndTime, 0, 0, BookingStatus.ACTIVE);
+		
+		Booking secondBooking = new Booking("testBookingTwo", account, room, secondStartTime, secondEndTime, 0, 0, BookingStatus.ACTIVE);
+		
+		try {
+			accountRepo.saveAccount(account);
+			roomRepo.saveRoom(room);
+			bookingRepo.saveBooking(firstBooking);
+			bookingRepo.saveBooking(secondBooking);
+			
+			List<Booking> foundBookings = bookingRepo.findBookingsByRoomId(room.getRoomId());
+			
+			assertEquals(2, foundBookings.size());
+			assertEquals("testRoom", foundBookings.get(0).getRoom().getRoomId());
+			assertEquals("testRoom", foundBookings.get(1).getRoom().getRoomId());
+		}
+		
+		finally {
+			bookingRepo.deleteBooking(firstBooking.getBookingId());
+			bookingRepo.deleteBooking(secondBooking.getBookingId());
+			accountRepo.deleteUser(account.getUserName());
+			roomRepo.deleteRoom(room.getRoomId());
+		}
+	}
+	
+	
+	
+	/*
+	 * this test ensures that findBookingsByRoomId()
+	 * returns an empty list
+	 */
+	@Test
+	public void findNullBookingsByRoomId() {
+		
+		BookingRepository bookingRepo = new BookingRepository();
+
+		assertEquals(0, bookingRepo.findBookingsByRoomId(null).size());
+	}
+	
+	
+	
+	/*
+	 * this test ensures that deleteNullBooking()
+	 * does not delete anything when passed null
+	 */
+	@Test
+	public void deleteNullBooking() {
+		
+		BookingRepository bookingRepo = new BookingRepository();
+		int initialSize = bookingRepo.getAllBookings().size();
+		bookingRepo.deleteBooking(null);
+		assertEquals(bookingRepo.getAllBookings().size(), initialSize);
+	}
+	
+	
+	
+	/*
+	 * this test ensures that findBookingsByUsername()
+	 * returns all bookings belonging to the correct account
+	 */
+	@Test
+	public void findBookingsByUsername() {
+		
+		BookingRepository bookingRepo = new BookingRepository();
+		AccountRepository accountRepo = new AccountRepository();
+		RoomRepository roomRepo = new RoomRepository();
+		
+		Room room = new Room("testRoom", "testRoomName", 0, 0, RoomStatus.AVAILABLE);
+		
+		Student student = new Student("test");
+		Account account = new Account("testuser", "password", "test@test.com", AccountType.STUDENT, student);
+		
+		LocalDateTime firstStartTime = LocalDateTime.of(2026, 12, 25, 9, 0);
+		LocalDateTime firstEndTime = LocalDateTime.of(2026, 12, 25, 11, 0);
+		
+		LocalDateTime secondStartTime = LocalDateTime.of(2026, 12, 26, 9, 0);
+		LocalDateTime secondEndTime = LocalDateTime.of(2026, 12, 26, 11, 0);
+		
+		Booking firstBooking = new Booking("testBookingOne", account, room, firstStartTime, firstEndTime, 0, 0, BookingStatus.ACTIVE);
+		
+		Booking secondBooking = new Booking("testBookingTwo", account, room, secondStartTime, secondEndTime,0, 0, BookingStatus.ACTIVE);
+		
+		try {
+			accountRepo.saveAccount(account);
+			roomRepo.saveRoom(room);
+			bookingRepo.saveBooking(firstBooking);
+			bookingRepo.saveBooking(secondBooking);
+			
+			List<Booking> foundBookings = bookingRepo.findBookingsByUsername(account.getUserName());
+			
+			assertEquals(2, foundBookings.size());
+			assertEquals("testuser", foundBookings.get(0).getAccount().getUserName());
+			assertEquals("testuser", foundBookings.get(1).getAccount().getUserName());
+		}
+		
+		finally {
+			bookingRepo.deleteBooking(firstBooking.getBookingId());
+			bookingRepo.deleteBooking(secondBooking.getBookingId());
+			accountRepo.deleteUser(account.getUserName());
+			roomRepo.deleteRoom(room.getRoomId());
+		}
+	}
+
+	
 }
